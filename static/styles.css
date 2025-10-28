@@ -73,3 +73,42 @@ button {
         padding: 6px 12px;
     }
 }
+
+.jump-form {
+    text-align: center;
+    margin: 0;
+}
+
+.jump-form select, 
+.jump-form button {
+    font-size: 1rem;
+    margin: 0 4px;
+    padding: 4px 8px;
+}
+
+/* .jump-form select {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fafafa;
+} */
+
+.jump-form select {
+    border: none;
+    background-color: transparent;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+.jump-form select:focus {
+    outline: none;
+}
+
+.jump-form button {
+    background-color: #eee;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.jump-form button:hover {
+    background-color: #ddd;
+}

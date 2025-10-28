@@ -9,7 +9,21 @@
 </head>
 
 <body>
-    <h1>{{ year }}年 {{ month }}月</h1>
+
+<h1>
+    <form method="get" class="jump-form">
+        <select name="year" id="year-select" onchange="this.form.submit()">
+            {% for y in range(year-5, year+6) %}
+                <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}年</option>
+            {% endfor %}
+        </select>
+        <select name="month" id="month-select" onchange="this.form.submit()">
+            {% for m in range(1, 13) %}
+                <option value="{{ m }}" {% if m == month %}selected{% endif %}>{{ m }}月</option>
+            {% endfor %}
+        </select>
+    </form>
+</h1>
 
     <div>
         <a href="/?year={{ year if month > 1 else year-1 }}&month={{ month-1 if month > 1 else 12 }}">
