@@ -1,14 +1,37 @@
+10/27/2025
+
 uv init -p 3.13 calender-app
         でプロジェクト作成。
+
 cd calender-app
+
 git init
+
 git branch -M main
+
 git add .
+
 git commit -m "initial commit"
+
 uv add flask
-        しかし、「error: Failed to install: flask-3.1.2-py3-none-any.whl (flask==3.1.2)
-        Caused by: failed to hardlink file from C:\Users\kosuk\AppData\Local\uv\cache\archive-v0\oGWGxL7mUb6UgjsUDTEIZ\flask\py.typed to C:\Users\kosuk\Documents\programing\calender_app\.venv\Lib\site-packages\flask\py.typed: クラウド操作は、互換性 のないハードリンクのファイルでは実行できません。 (os error 396)」というエラーが出てインストールできない。
+        しかし、「error: Failed to install: flask-3.1.2-py3-none-any.whl (flask==3.1.2)Caused by: failed to hardlink file from C:\Users\kosuk\AppData\Local\uv\cache\archive-v0\oGWGxL7mUb6UgjsUDTEIZ\flask\py.typed to C:\Users\kosuk\Documents\programing\calender_app\.venv\Lib\site-packages\flask\py.typed: クラウド操作は、互換性 のないハードリンクのファイルでは実行できません。 (os error 396)」というエラーが出てインストールできない。
+
 uv cache clear
         でキャッシュをクリア
+
 uv add flask
         で再度flaskをインストール。今度は成功した。
+
+    app.pyにFlaskのテストコードを追加。
+
+    templates/index.htmlを作成。
+
+git add .
+
+git commit -m "make app.py and templates/index.html. We can run flask
+
+    app.pyにmonthのコードを追加
+
+git add app.py
+
+git commit -m "add month"
