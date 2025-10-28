@@ -2,7 +2,10 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendar App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 
 <body>
@@ -18,7 +21,22 @@
         </a>
     </div>
 
-    <pre>{{ calendar_text }}</pre>
+    <table>
+        <tr>
+            <th>日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th>
+        </tr>
+        {% for week in month_days %}
+        <tr>
+            {% for day in week %}
+                {% if day == 0 %}
+                    <td class="empty"></td>
+                {% else %}
+                    <td>{{ day }}</td>
+                {% endif %}
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
 </body>
 
 </html>
