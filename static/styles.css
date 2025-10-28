@@ -55,6 +55,21 @@ td {
     height: calc((100vh - 220px) / 6);  /* 180px → 220px に増やすと曜日行ぶんの余白を確保 */
 }
 
+.day-number {
+    font-weight: bold;
+}
+
+.event {
+    font-size: 0.8rem;
+    margin-top: 4px;
+    background-color: #e8f0fe;
+    border-radius: 4px;
+    padding: 2px 4px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 .empty {
     background-color: #fafafa;
 }
@@ -88,12 +103,6 @@ button {
     margin: 0 4px;
     padding: 4px 8px;
 }
-
-/* .jump-form select {
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #fafafa;
-} */
 
 .jump-form select {
     border: none;

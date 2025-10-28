@@ -45,7 +45,14 @@
                 {% if day == 0 %}
                     <td class="empty"></td>
                 {% else %}
-                    <td>{{ day }}</td>
+                    <td>
+                        <div class="day-number">{{day}}</div>
+                        {% if day in events%}
+                            {% for title in events[day] %}
+                                <div class="event">{{ title }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </td>
                 {% endif %}
             {% endfor %}
         </tr>
