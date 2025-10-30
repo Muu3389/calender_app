@@ -16,9 +16,9 @@ def init_db():
         cursor.execute("""
             CREATE TABLE events (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
                 date TEXT NOT NULL,
                 title TEXT NOT NULL
+                time TEXT NOT NULL
             )
         """)
         conn.commit()
