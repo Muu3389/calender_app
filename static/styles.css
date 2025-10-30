@@ -64,6 +64,7 @@ td {
     margin-top: 4px;
     background-color: #e8f0fe;
     border-radius: 4px;
+    text-align: left;
     padding: 2px 4px;
     overflow: hidden;
     white-space: nowrap;
@@ -97,7 +98,7 @@ button {
     margin: 0;
 }
 
-.jump-form select, 
+.jump-form select,
 .jump-form button {
     font-size: 1rem;
     margin: 0 4px;

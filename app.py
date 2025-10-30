@@ -43,11 +43,11 @@ def index():
     # 予定データ取得
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
-    cur.execute("SELECT date, title FROM events WHERE date LIKE ?", (f"{year}-{month:02d}-%",))
+    cur.execute("SELECT date, title, time FROM events WHERE date LIKE ?", (f"{year}-{month:02d}-%",))
     events = {}
-    for date,title in cur.fetchall():
+    for date,title,time in cur.fetchall():
         day = int(date.split("-")[2])
-        events.setdefault(day, []).append(title)
+        events.setdefault(day, []).append((time, title))
     conn.close()
 
     return render_template(
