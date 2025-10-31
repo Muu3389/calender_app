@@ -17,6 +17,37 @@ body {
     width: 100vw;
 }
 
+.event-form {
+    display: none;
+    width: 100%;
+    background: #f8f8f8;
+    border-bottom: 1px solid #ccc;
+    padding: 10px 20px;
+    box-sizing: border-box;
+}
+
+.event-form h3 {
+    display: inline-block;
+    margin: 0 10px 0 0;
+    font-size: 1rem;
+}
+
+.event-form input[type="text"] {
+    margin-right: 10px;
+    padding: 4px;
+}
+
+.event-form input[type="time"] {
+    margin-right: 10px;
+    padding: 4px;
+}
+
+.event-form button {
+    margin: 0 5px;
+    padding: 4px 10px;
+    cursor: pointer;
+}
+
 h1 {
     text-align: center;
     margin: 20px 0 10px;

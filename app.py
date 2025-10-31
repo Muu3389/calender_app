@@ -17,7 +17,7 @@ def init_db():
             CREATE TABLE events (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 date TEXT NOT NULL,
-                title TEXT NOT NULL
+                title TEXT NOT NULL,
                 time TEXT NOT NULL
             )
         """)
