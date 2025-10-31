@@ -18,7 +18,8 @@ def init_db():
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 date TEXT NOT NULL,
                 title TEXT NOT NULL,
-                time TEXT NOT NULL
+                time TEXT NOT NULL,
+                color TEXT NOT NULL DEFAULT '#e8f0fe'
             )
         """)
         conn.commit()
