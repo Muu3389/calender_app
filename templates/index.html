@@ -10,11 +10,11 @@
 
 <body>
 
-    <div id="event-form" class="event-form">
+    <form id="event-form" class="event-form" method="POST" action="/add">
         <h3>予定を追加</h3>
-        <label>日付: <input type="text" id="event-date" readonly></label>
-        <label>時間: <input type="time" id="event-time"></label>
-        <label>内容: <input type="text" id="event-text"></label>
+        <label>日付: <input type="text" name="event-date" id="event-date" readonly></label>
+        <label>時間: <input type="time" name="event-time" id="event-time"></label>
+        <label>内容: <input type="text" name="event-text" id="event-text"></label>
 
         <div class="color-picker">
             <span class="color-option" data-color="#e8f0fe" style="background:#e8f0fe;"></span>
@@ -27,9 +27,11 @@
             <span class="color-option" data-color="#d1ecf1" style="background:#d1ecf1;"></span>
         </div>
 
-        <button id="save-event">保存</button>
-        <button id="cancel-event">キャンセル</button>
-    </div>
+        <input type="hidden" name="event-color" id="event-color">
+
+        <button type="submit" id="save-event">保存</button>
+        <button type="button" id="cancel-event">キャンセル</button>
+    </form>
 
 
     <h1>
@@ -71,7 +73,9 @@
                         <div class="day-number">{{day}}</div>
                         {% if day in events%}
                             {% for title in events[day] %}
-                                <div class="event">{{ title[0] }}: {{ title[1] }}</div>
+                                <div class="event" style="background-color: {{ title[2] }};">
+                                    {{ title[0] }}: {{ title[1] }}
+                                </div>
                             {% endfor %}
                         {% endif %}
                     </td>

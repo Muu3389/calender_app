@@ -28,26 +28,37 @@ document.querySelectorAll('.color-option').forEach(option => {
         document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
         option.classList.add('selected');
         selectedColor = option.dataset.color;
+        document.getElementById('event-color').value = selectedColor;
     };
 });
 
 // 保存ボタン
-document.getElementById('save-event').onclick = () => {
+document.getElementById('save-event').onclick = async (e) => {
+    e.preventDefault(); // フォーム送信を止める
+
     const date = document.getElementById('event-date').value;
     const time = document.getElementById('event-time').value;
-    const text = document.getElementById('event-text').value;
-    if (!text) return;
+    const title = document.getElementById('event-text').value;
+    const color = document.getElementById('event-color').value;
 
-    const targetCell = document.querySelector(`td[data-date="${date}"]`);
-    const div = document.createElement('div');
-    div.className = 'event';
-    div.textContent = time ? `${time} ${text}` : text;
-    div.style.backgroundColor = selectedColor;
-    targetCell.appendChild(div);
+    if (!title) return;
 
-    document.getElementById('event-form').style.display = 'none';
-    document.getElementById('event-text').value = '';
-    document.getElementById('event-time').value = '';
-    document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
-    selectedColor = "#e8f0fe";
+    const response = await fetch("/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date, time, title, color })
+    });
+
+    if (response.ok) {
+        const targetCell = document.querySelector(`td[data-date="${date}"]`);
+        const div = document.createElement('div');
+        div.className = 'event';
+        div.textContent = time ? `${time} ${title}` : title;
+        div.style.backgroundColor = color;
+        targetCell.appendChild(div);
+
+        document.getElementById('event-form').style.display = 'none';
+        document.getElementById('event-text').value = '';
+        document.getElementById('event-time').value = '';
+    }
 };
