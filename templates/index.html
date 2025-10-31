@@ -60,7 +60,7 @@
     </div>
 
     <table>
-        <tr>
+        <tr class="weekday-row">
             <th>日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th>
         </tr>
         {% for week in month_days %}
@@ -74,7 +74,7 @@
                         {% if day in events%}
                             {% for title in events[day] %}
                                 <div class="event" style="background-color: {{ title[2] }};">
-                                    {{ title[0] }}: {{ title[1] }}
+                                    {{ title[1] }}
                                 </div>
                             {% endfor %}
                         {% endif %}
