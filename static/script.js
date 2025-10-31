@@ -62,3 +62,26 @@ document.getElementById('save-event').onclick = async (e) => {
         document.getElementById('event-time').value = '';
     }
 };
+
+// 週（tr）クリックで展開・縮小（weekday-rowは無視）
+document.querySelectorAll("table tr").forEach(row => {
+    // ignore header row
+    if (row.classList.contains('weekday-row')) return;
+
+    row.addEventListener("click", (e) => {
+        // クリックがセル内のフォーム関連要素や保存ボタンであれば処理しない
+        const ignoreTags = ['BUTTON', 'INPUT', 'SELECT', 'A', 'LABEL'];
+        if (ignoreTags.includes(e.target.tagName)) return;
+
+        // toggle this row, and close others
+        const isExp = row.classList.contains('expanded');
+        document.querySelectorAll("table tr.expanded").forEach(r => r.classList.remove('expanded'));
+
+        if (!isExp) {
+            row.classList.add('expanded');
+            // 可能なら展開した行のトップにスクロール（見やすくする）
+            row.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+});
+

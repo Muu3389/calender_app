@@ -74,7 +74,8 @@
                         {% if day in events%}
                             {% for title in events[day] %}
                                 <div class="event" style="background-color: {{ title[2] }};">
-                                    {{ title[1] }}
+                                    <span class="event-time">{{ title[0] }}<br></span>
+                                    <span class="event-title">{{ title[1] }}</span>
                                 </div>
                             {% endfor %}
                         {% endif %}

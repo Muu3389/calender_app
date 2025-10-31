@@ -210,4 +210,55 @@ button {
         height: calc((90vh - 220px) / 6); /* 通常行 */
     }
 
+    tr.expanded td .event {
+        font-size: 0.85rem;
+    }
+}
+
+tr {
+    transition: all 0.2s ease;
+}
+
+tr.expanded {
+    height: auto !important;
+}
+
+/* 行展開時のスタイル */
+tr.expanded td {
+    height: auto !important;
+}
+
+/* 展開された行内のイベントは折返して時刻を表示 */
+tr.expanded td .event {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    padding: 6px;
+    margin-bottom: 6px;
+    font-size: 10px; /* ← 通常と同じ大きさに */
+}
+
+/* 通常時はイベントは短く一行で省略表示、時刻は隠す */
+td .event {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 時刻は通常非表示 */
+.event-time {
+    display: none;
+    font-weight: normal;
+    margin-right: 6px;
+    color: #333;
+}
+
+/* 行が展開されたら時刻を表示 */
+tr.expanded td .event-time {
+    display: inline;
+}
+
+/* 見た目強調（任意） */
+tr.expanded td {
+    background-color: #fbfdff;
 }
