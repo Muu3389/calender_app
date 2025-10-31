@@ -48,6 +48,30 @@ body {
     cursor: pointer;
 }
 
+.color-picker {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 8px 0;
+    gap: 6px;
+}
+
+.color-option {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.color-option:hover {
+    transform: scale(1.2);
+}
+
+.color-option.selected {
+    border: 3px solid #333;
+}
+
 h1 {
     text-align: center;
     margin: 20px 0 10px;
@@ -93,13 +117,13 @@ td {
 .event {
     font-size: 0.8rem;
     margin-top: 4px;
-    background-color: #e8f0fe;
     border-radius: 4px;
     text-align: left;
     padding: 2px 4px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    background-color: var(--event-color, #e8f0fe);  /* 初期色 */
 }
 
 .empty {
