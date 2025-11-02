@@ -34,7 +34,7 @@ document.querySelectorAll('.color-option').forEach(option => {
 
 // 保存ボタン
 document.getElementById('save-event').onclick = async (e) => {
-    e.preventDefault(); // フォーム送信を止める
+    e.preventDefault();
 
     const date = document.getElementById('event-date').value;
     const time = document.getElementById('event-time').value;
@@ -50,12 +50,24 @@ document.getElementById('save-event').onclick = async (e) => {
     });
 
     if (response.ok) {
-        const targetCell = document.querySelector(`td[data-date="${date}"]`);
+        const cell = document.querySelector(`td[data-date="${date}"]`);
+
+        // ✅ event-list がないセル(予定0)なら作る
+        let list = cell.querySelector('.event-list');
+        if (!list) {
+            list = document.createElement('div');
+            list.className = 'event-list';
+            cell.appendChild(list);
+        }
+
         const div = document.createElement('div');
         div.className = 'event';
-        div.textContent = time ? `${time} ${title}` : title;
+        div.innerHTML = time
+            ? `<span class="event-time">${time}<br></span><span class="event-title">${title}</span>`
+            : `<span class="event-title">${title}</span>`;
         div.style.backgroundColor = color;
-        targetCell.appendChild(div);
+
+        list.appendChild(div);
 
         document.getElementById('event-form').style.display = 'none';
         document.getElementById('event-text').value = '';
@@ -63,25 +75,21 @@ document.getElementById('save-event').onclick = async (e) => {
     }
 };
 
-// 週（tr）クリックで展開・縮小（weekday-rowは無視）
-document.querySelectorAll("table tr").forEach(row => {
-    // ignore header row
-    if (row.classList.contains('weekday-row')) return;
+// クリックで週を展開（他の週が開いていたら閉じる）
+document.querySelectorAll('table tr').forEach(row => {
+    row.addEventListener('click', () => {
+        // 曜日行はスキップ
+        if (row.classList.contains('weekday-row')) return;
 
-    row.addEventListener("click", (e) => {
-        // クリックがセル内のフォーム関連要素や保存ボタンであれば処理しない
-        const ignoreTags = ['BUTTON', 'INPUT', 'SELECT', 'A', 'LABEL'];
-        if (ignoreTags.includes(e.target.tagName)) return;
+        // 現在開いている行を閉じる
+        const expanded = document.querySelector('tr.expanded');
+        if (expanded && expanded !== row) {
+            expanded.classList.remove('expanded');
+        }
 
-        // toggle this row, and close others
-        const isExp = row.classList.contains('expanded');
-        document.querySelectorAll("table tr.expanded").forEach(r => r.classList.remove('expanded'));
-
-        if (!isExp) {
+        // 自分を展開（既に開いていてもそのまま）
+        if (!row.classList.contains('expanded')) {
             row.classList.add('expanded');
-            // 可能なら展開した行のトップにスクロール（見やすくする）
-            row.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     });
 });
-

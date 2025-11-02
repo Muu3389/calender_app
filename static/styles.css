@@ -5,7 +5,7 @@ html, body {
     padding: 0;
     font-family: sans-serif;
     box-sizing: border-box;
-    /* overflow: hidden; */
+    overflow: hidden;
 }
 
 body {
@@ -91,6 +91,7 @@ table {
     width: 100%;
     flex-grow: 1;
     table-layout: fixed;
+    height: 100%;
 }
 
 th, td {
@@ -108,7 +109,11 @@ th {
 }
 
 td {
-    height: calc((100vh - 220px) / 6);  /* 180px → 220px に増やすと曜日行ぶんの余白を確保 */
+    position: relative;
+    height: calc((100%) / 6);
+    vertical-align: top;
+    overflow: hidden;
+    /* <-- 中身だけスクロールにする準備 */
 }
 
 .day-number {
@@ -126,6 +131,27 @@ td {
     white-space: nowrap;
     text-overflow: ellipsis;
     background-color: var(--event-color, #e8f0fe);  /* 初期色 */
+}
+
+.event-list {
+    max-height: calc((100vh) / 6 - 20px);
+    /* 各セルの高さ - 日付/余白分 */
+    overflow-y: auto;
+    padding-right: 3px;
+}
+
+.event-list::-webkit-scrollbar {
+    width: 3px;
+}
+
+.event-list::-webkit-scrollbar-thumb {
+    background: #bbb;
+    border-radius: 2px;
+}
+
+tr.expanded td .event-list {
+    max-height: none;
+    overflow: visible;
 }
 
 .empty {
@@ -179,53 +205,18 @@ button {
     background-color: #f0f0f0;
 }
 
-@media (max-width: 600px) {
-    button {
-        font-size: 0.9rem;
-        padding: 6px 12px;
-    }
-
-    .weekday-row {
-        height: 10px !important; /* ← tr自体を制御 */
-    }
-    .weekday-row th {
-        height: 10px !important; /* ← 各セルも強制的に合わせる */
-        padding: 0 !important;
-        line-height: 10px;
-        vertical-align: middle;
-        font-size: 0.7rem !important;
-    }
-
-    /* テーブル構造調整 */
-    table {
-        border-collapse: collapse;
-        border-spacing: 0;
-    }
-
-    tr {
-        height: auto;
-    }
-
-    td {
-        height: calc((90vh - 220px) / 6); /* 通常行 */
-    }
-
-    tr.expanded td .event {
-        font-size: 0.85rem;
-    }
-}
-
 tr {
     transition: all 0.2s ease;
 }
 
 tr.expanded {
-    height: auto !important;
+    height: calc((100vh) / 6 * 2) !important;
 }
 
-/* 行展開時のスタイル */
 tr.expanded td {
-    height: auto !important;
+    height: calc((100vh) / 6) !important;
+    overflow: hidden;
+    /* 行の外にはみ出さない */
 }
 
 /* 展開された行内のイベントは折返して時刻を表示 */
@@ -238,11 +229,18 @@ tr.expanded td .event {
     font-size: 10px; /* ← 通常と同じ大きさに */
 }
 
+tr.expanded td .event-list {
+    height: calc((100vh) / 6 * 2 - 20px) !important;
+    overflow-y: auto;
+    bottom: 0;
+}
+
 /* 通常時はイベントは短く一行で省略表示、時刻は隠す */
 td .event {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    top: 18px;
 }
 
 /* 時刻は通常非表示 */
@@ -261,4 +259,77 @@ tr.expanded td .event-time {
 /* 見た目強調（任意） */
 tr.expanded td {
     background-color: #fbfdff;
+}
+
+.day-number {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 2;
+}
+
+/* スマホ用 */
+@media (max-width: 600px) {
+
+    html,
+    body {
+        height: 100svh;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        /* ← ページ全体ではスクロールさせない */
+        display: flex;
+        flex-direction: column;
+        /* 上から h1 → nav → table と縦並び */
+    }
+
+    /* ▼ カレンダーより上の領域（h1 + nav）の合計高さを固定する */
+    h1 {
+        height: 50px;
+        /* ← 実際の高さに合わせて調整してOK */
+        margin: 0;
+        line-height: 50px;
+        text-align: center;
+    }
+
+    .nav {
+        height: 50px;
+        margin: 0;
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    /* ▼ ここが重要：カレンダー（table）は「残った高さだけ使う」 */
+    table {
+        flex-grow: 1;
+        /* ← 残ったスペースを全部ここへ */
+        height: auto;
+        /* ← vhの固定は禁止 */
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    /* ▼ セルの高さ = tableの高さの1/6 */
+    td {
+        height: calc(100% / 6);
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* ▼ 展開時 = セルを2倍にする */
+    tr.expanded td {
+        height: calc((100% / 6) * 2) !important;
+    }
+
+    /* ▼ セル内のイベントだけスクロール許可 */
+    td .event-list {
+        position: absolute;
+        top: 18px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow-y: auto;
+    }
 }

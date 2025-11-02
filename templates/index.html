@@ -70,15 +70,17 @@
                     <td class="empty"></td>
                 {% else %}
                     <td data-date="{{ year }}-{{ '%02d' % month }}-{{ '%02d' % day }}" class="day-cell">
-                        <div class="day-number">{{day}}</div>
-                        {% if day in events%}
-                            {% for title in events[day] %}
-                                <div class="event" style="background-color: {{ title[2] }};">
-                                    <span class="event-time">{{ title[0] }}<br></span>
-                                    <span class="event-title">{{ title[1] }}</span>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
+                        <div class="day-number">{{ day }}</div>
+                        <div class="event-list">
+                            {% if day in events %}
+                                {% for title in events[day] %}
+                                    <div class="event" style="background-color: {{ title[2] }};">
+                                        <span class="event-time">{{ title[0] }}<br></span>
+                                        <span class="event-title">{{ title[1] }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
                     </td>
                 {% endif %}
             {% endfor %}
