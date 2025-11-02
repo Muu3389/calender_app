@@ -273,8 +273,8 @@ tr.expanded td {
 
     html,
     body {
-        height: 100svh;
-        margin: 0;
+        height: 100vh;
+        margin: 3px;
         padding: 0;
         overflow: hidden;
         /* ← ページ全体ではスクロールさせない */
