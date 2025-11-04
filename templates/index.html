@@ -9,11 +9,11 @@
 </head>
 
 <body>
-
     <form id="event-form" class="event-form" method="POST" action="/add">
-        <h3>予定を追加</h3><br>
-        <label>日付: <input type="text" name="event-date" id="event-date" readonly></label><br>
-        <label>時間: <input type="time" name="event-time" id="event-time"></label><br>
+        <input type="hidden" name="event-id" id="event-id">
+        <h3>予定を追加 / 編集</h3>
+        <label>日付: <input type="text" name="event-date" id="event-date" readonly></label>
+        <label>時間: <input type="time" name="event-time" id="event-time"></label>
         <label>内容: <input type="text" name="event-text" id="event-text"></label>
 
         <div class="color-picker">
@@ -30,9 +30,9 @@
         <input type="hidden" name="event-color" id="event-color">
 
         <button type="submit" id="save-event">保存</button>
+        <button type="button" id="delete-event">削除</button>
         <button type="button" id="cancel-event">キャンセル</button>
     </form>
-
 
     <h1>
         <form method="get" class="jump-form">
@@ -74,7 +74,7 @@
                         <div class="event-list">
                             {% if day in events %}
                                 {% for title in events[day] %}
-                                    <div class="event" style="background-color: {{ title[2] }};">
+                                    <div class="event" data-id="{{ title[3] }}" style="background-color: {{ title[2] }};">
                                         <span class="event-time">{{ title[0] }}<br></span>
                                         <span class="event-title">{{ title[1] }}</span>
                                     </div>
