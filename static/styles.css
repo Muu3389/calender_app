@@ -1,6 +1,7 @@
+/* ===== 全体設定 ===== */
 html, body {
-    height: 100svh;
     width: 100%;
+    height: 100vh;
     margin: 3px;
     padding: 0;
     font-family: sans-serif;
@@ -11,13 +12,10 @@ html, body {
 body {
     display: flex;
     flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start;
-    background-color: #fff;
-    height: 100vh;
-    width: 100vw;
+    background: #fff;
 }
 
+/* ===== 予定フォーム ===== */
 .event-form {
     display: none;
     width: 100%;
@@ -28,16 +26,11 @@ body {
 }
 
 .event-form h3 {
-    display: inline-block;
-    margin: 0 10px 0 0;
+    margin: 0 10px 8px 0;
     font-size: 1rem;
 }
 
-.event-form input[type="text"] {
-    margin-right: 10px;
-    padding: 4px;
-}
-
+.event-form input[type="text"],
 .event-form input[type="time"] {
     margin-right: 10px;
     padding: 4px;
@@ -52,8 +45,8 @@ body {
 .color-picker {
     display: flex;
     flex-wrap: wrap;
-    margin: 8px 0;
     gap: 6px;
+    margin: 8px 0;
 }
 
 .color-option {
@@ -73,9 +66,22 @@ body {
     border: 3px solid #333;
 }
 
-h1 {
+/* ===== ヘッダー・ナビゲーション ===== */
+header {
     text-align: center;
-    margin: 20px 0 10px;
+    margin: 10px 0;
+}
+
+.jump-form select {
+    font-size: 1.1rem;
+    margin: 0 4px;
+    padding: 4px 8px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+.jump-form select:focus {
+    outline: none;
 }
 
 .nav {
@@ -86,164 +92,93 @@ h1 {
     padding: 0 20px;
 }
 
+button {
+    padding: 8px 16px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: 1px solid #aaa;
+    background: #eee;
+    border-radius: 4px;
+}
+button:hover {
+    background: #ddd;
+}
+
+/* ===== カレンダー ===== */
 table {
-    border-collapse: collapse;
     width: 100%;
+    border-collapse: collapse;
     flex-grow: 1;
     table-layout: fixed;
-    height: 100%;
+    height: calc(100vh - 180px);
 }
 
 th, td {
     border: 1px solid #999;
     text-align: center;
-    /* padding: 6px; */
-    height: calc((100vh - 180px) / 6);
     vertical-align: top;
 }
 
-th {
-    background-color: #f0f0f0;
-    height: 40px;
-    font-weight: bold;
+.weekday-row th {
+    background: #f0f0f0;
+    height: 30px;
+    font-size: 0.85rem;
+    padding: 2px 0;
 }
 
 td {
     position: relative;
-    height: calc((100%) / 6);
+    height: calc((100% - 30px) / 6);
     vertical-align: top;
     overflow: hidden;
-    /* <-- 中身だけスクロールにする準備 */
 }
 
 .day-number {
     font-weight: bold;
     font-size: 13px;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 2;
 }
 
-.event {
-    font-size: 10px;
-    margin-top: 1px;
-    border-radius: 4px;
-    text-align: left;
-    padding: 1px 1px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    background-color: var(--event-color, #e8f0fe);  /* 初期色 */
+.empty {
+    background: #fafafa;
 }
 
+/* ===== イベント表示 ===== */
 .event-list {
-    max-height: calc((100vh) / 6 - 20px);
-    /* 各セルの高さ - 日付/余白分 */
+    position: absolute;
+    top: 16px;
+    left: 0;
+    right: 0;
+    bottom: 0;
     overflow-y: auto;
-    padding-right: 3px;
+    padding: 0 3px 2px;
+    box-sizing: border-box;
+    max-height: 100%;
 }
-
 .event-list::-webkit-scrollbar {
     width: 3px;
 }
-
 .event-list::-webkit-scrollbar-thumb {
     background: #bbb;
     border-radius: 2px;
 }
 
-tr.expanded td .event-list {
-    max-height: none;
-    overflow: visible;
-}
 
-.empty {
-    background-color: #fafafa;
-}
-
-button {
-    padding: 8px 16px;
-    margin: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
-.jump-form {
-    text-align: center;
-    margin: 0;
-}
-
-.jump-form select,
-.jump-form button {
-    font-size: 1rem;
-    margin: 0 4px;
-    padding: 4px 8px;
-}
-
-.jump-form select {
-    border: none;
-    background-color: transparent;
-    font-size: 1.2rem;
-    cursor: pointer;
-}
-.jump-form select:focus {
-    outline: none;
-}
-
-.jump-form button {
-    background-color: #eee;
-    border: 1px solid #aaa;
+.event {
+    font-size: 10px;
     border-radius: 4px;
-    cursor: pointer;
-}
-
-.jump-form button:hover {
-    background-color: #ddd;
-}
-
-.weekday-row th {
-    height: 20px;
-    font-size: 0.85rem;
-    padding: 2px 0;
-    background-color: #f0f0f0;
-}
-
-tr {
-    transition: all 0.2s ease;
-}
-
-tr.expanded {
-    height: calc((100vh) / 6 * 2) !important;
-}
-
-tr.expanded td {
-    height: calc((100vh) / 6) !important;
+    text-align: left;
+    padding: 1px 2px;
+    margin: 1px 0;      /* ← marginで押し上げてたので縮小 */
     overflow: hidden;
-    /* 行の外にはみ出さない */
-}
-
-/* 展開された行内のイベントは折返して時刻を表示 */
-tr.expanded td .event {
-    white-space: normal;
-    overflow: visible;
-    text-overflow: unset;
-    padding: 6px;
-    margin-bottom: 6px;
-    font-size: 10px; /* ← 通常と同じ大きさに */
-}
-
-tr.expanded td .event-list {
-    height: calc((100vh) / 6 * 2 - 20px) !important;
-    overflow-y: auto;
-    bottom: 0;
-}
-
-/* 通常時はイベントは短く一行で省略表示、時刻は隠す */
-td .event {
     white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
-    top: 18px;
+    background: var(--event-color, #e8f0fe);
 }
 
-/* 時刻は通常非表示 */
 .event-time {
     display: none;
     font-weight: normal;
@@ -251,79 +186,75 @@ td .event {
     color: #333;
 }
 
-/* 行が展開されたら時刻を表示 */
+/* ===== 週展開時 ===== */
+tr {
+    transition: all 0.2s ease;
+}
+
+tr.expanded {
+    height: calc((100% / 6) * 2) !important;
+    background: #fbfdff;
+}
+
+tr.expanded td {
+    height: calc((100% / 6) * 2) !important;
+    overflow: hidden;
+}
+
+tr.expanded td .event-list {
+    max-height: none;
+    overflow-y: auto;
+    height: 100%
+}
+
+tr.expanded td .event {
+    white-space: normal;
+    overflow: visible;
+    padding: 6px;
+    margin-bottom: 6px;
+}
+
 tr.expanded td .event-time {
     display: inline;
 }
 
-/* 見た目強調（任意） */
-tr.expanded td {
-    background-color: #fbfdff;
-}
-
-.day-number {
-    position: sticky;
-    top: 0;
-    background: white;
-    z-index: 2;
-}
-
-/* スマホ用 */
+/* ===== スマホ対応 ===== */
 @media (max-width: 600px) {
 
-    html,
-    body {
+    html, body {
         height: 100vh;
-        margin: 3px;
-        padding: 0;
         overflow: hidden;
-        /* ← ページ全体ではスクロールさせない */
         display: flex;
         flex-direction: column;
-        /* 上から h1 → nav → table と縦並び */
+        margin: 3px;
     }
 
-    /* ▼ カレンダーより上の領域（h1 + nav）の合計高さを固定する */
-    h1 {
+    header {
         height: 50px;
-        /* ← 実際の高さに合わせて調整してOK */
         margin: 0;
         line-height: 50px;
-        text-align: center;
     }
 
     .nav {
         height: 50px;
         margin: 0;
         padding: 0 20px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
     }
 
-    /* ▼ ここが重要：カレンダー（table）は「残った高さだけ使う」 */
     table {
         flex-grow: 1;
-        /* ← 残ったスペースを全部ここへ */
         height: auto;
-        /* ← vhの固定は禁止 */
         width: 100%;
-        table-layout: fixed;
     }
 
-    /* ▼ セルの高さ = tableの高さの1/6 */
     td {
         height: calc(100% / 6);
-        position: relative;
-        overflow: hidden;
     }
 
-    /* ▼ 展開時 = セルを2倍にする */
     tr.expanded td {
         height: calc((100% / 6) * 2) !important;
     }
 
-    /* ▼ セル内のイベントだけスクロール許可 */
     td .event-list {
         position: absolute;
         top: 18px;

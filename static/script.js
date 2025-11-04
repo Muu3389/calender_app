@@ -1,153 +1,197 @@
-// 日付セルをダブルクリック → フォーム表示
+// =========================
+// Calendar Event Controller
+// =========================
+
+// --- DOMキャッシュ ---
+const form = document.getElementById('event-form');
+const fields = {
+    id: document.getElementById('event-id'),
+    date: document.getElementById('event-date'),
+    time: document.getElementById('event-time'),
+    title: document.getElementById('event-text'),
+    color: document.getElementById('event-color')
+};
+const cancelBtn = document.getElementById('cancel-event');
+const deleteBtn = document.getElementById('delete-event');
+const saveBtn = document.getElementById('save-event');
+const colorOptions = document.querySelectorAll('.color-option');
+
+let selectedColor = '#e8f0fe'; // 初期色
+
+// ---------------------
+// カレンダーセル関連
+// ---------------------
+
+// 日付セル：ダブルクリックでフォームを開く
 document.querySelectorAll('.day-cell').forEach(cell => {
     cell.ondblclick = () => {
-        const date = cell.getAttribute('data-date');
-        document.getElementById('event-date').value = date;
-        document.getElementById('event-form').style.display = 'block';
+        fields.date.value = cell.dataset.date;
+        form.style.display = 'block';
     };
 
-    // シングルクリック → フォーム非表示
+    // シングルクリックで閉じる（フォームが開いている場合のみ）
     cell.onclick = () => {
-        const form = document.getElementById('event-form');
         if (form.style.display === 'block') {
             form.style.display = 'none';
         }
     };
 });
 
-// キャンセルボタン
-document.getElementById('cancel-event').onclick = () => {
-    document.getElementById('event-form').style.display = 'none';
+// ---------------------
+// フォーム制御
+// ---------------------
+
+// キャンセルボタン → 閉じる＆リセット
+cancelBtn.onclick = () => {
+    form.style.display = 'none';
+    resetForm();
+};
+
+// 削除ボタン → API呼び出し
+deleteBtn.onclick = async () => {
+    const id = fields.id.value;
+    if (!id) return;
+
+    await fetch(`/delete/${id}`, { method: 'POST' });
+    location.reload();
 };
 
 // 色選択
-let selectedColor = "#e8f0fe"; // デフォルト
-
-document.querySelectorAll('.color-option').forEach(option => {
+colorOptions.forEach(option => {
     option.onclick = () => {
-        document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+        colorOptions.forEach(o => o.classList.remove('selected'));
         option.classList.add('selected');
         selectedColor = option.dataset.color;
-        document.getElementById('event-color').value = selectedColor;
+        fields.color.value = selectedColor;
     };
 });
 
-// 保存ボタン
-document.getElementById('save-event').onclick = async (e) => {
+// ---------------------
+// 保存処理（追加・更新共通）
+// ---------------------
+saveBtn.onclick = async e => {
     e.preventDefault();
 
-    const id = document.getElementById('event-id').value;
-    const date = document.getElementById('event-date').value;
-    const time = document.getElementById('event-time').value;
-    const title = document.getElementById('event-text').value;
-    const color = document.getElementById('event-color').value || "#e8f0fe";
-    const action = id ? "/update" : "/add";
-
+    const { id, date, time, title, color } = Object.fromEntries(
+        Object.entries(fields).map(([k, v]) => [k, v.value])
+    );
     if (!title) return;
 
-    const response = await fetch(action, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, date, time, title, color })
+    const isUpdate = Boolean(id);
+    const endpoint = isUpdate ? '/update' : '/add';
+
+    const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            id,
+            date,
+            time,
+            title,
+            color: color || selectedColor
+        })
     });
 
-    if (response.ok) {
-        const cell = document.querySelector(`td[data-date="${date}"]`);
-        let list = cell.querySelector('.event-list');
-        if (!list) {
-            list = document.createElement('div');
-            list.className = 'event-list';
-            cell.appendChild(list);
-        }
+    if (!response.ok) return;
+    const result = await response.json();
+    const eventId = result.id || id;
 
-        // 既存要素があるなら削除（複製防止）
-        if (id) {
-            const old = list.querySelector(`.event[data-id="${id}"]`);
-            if (old) old.remove();
-        }
-
-        const result = await response.json(); // サーバー側がidを返すようにする
-        const eventId = result.id || id;
-
-        const div = document.createElement('div');
-        div.className = 'event';
-        div.dataset.id = eventId;
-        div.style.backgroundColor = color;
-        div.innerHTML = time
-            ? `<span class="event-time">${time}<br></span><span class="event-title">${title}</span>`
-            : `<span class="event-title">${title}</span>`;
-
-        list.appendChild(div);
-
-        // 入力リセット
-        document.getElementById('event-form').style.display = 'none';
-        document.getElementById('event-id').value = '';
-        document.getElementById('event-text').value = '';
-        document.getElementById('event-time').value = '';
-    }
+    renderEvent({ eventId, date, time, title, color });
+    resetForm();
+    form.style.display = 'none';
 };
+
+// ---------------------
+// イベント描画・編集
+// ---------------------
+
+// カレンダーにイベントを追加 or 更新
+function renderEvent({ eventId, date, time, title, color }) {
+    const cell = document.querySelector(`td[data-date="${date}"]`);
+    if (!cell) return;
+
+    let list = cell.querySelector('.event-list');
+    if (!list) {
+        list = document.createElement('div');
+        list.className = 'event-list';
+        cell.appendChild(list);
+    }
+
+    // 既存イベントを上書き（複製防止）
+    list.querySelector(`.event[data-id="${eventId}"]`)?.remove();
+
+    const div = document.createElement('div');
+    div.className = 'event';
+    div.dataset.id = eventId;
+    div.style.backgroundColor = color;
+    div.innerHTML = time
+        ? `<span class="event-time">${time}</span> <span class="event-title">${title}</span>`
+        : `<span class="event-title">${title}</span>`;
+
+    list.appendChild(div);
+}
 
 // クリックで週を展開（他の週が開いていたら閉じる）
 document.querySelectorAll('table tr').forEach(row => {
-    row.addEventListener('click', () => {
+    row.addEventListener('click', e => {
         // 曜日行はスキップ
         if (row.classList.contains('weekday-row')) return;
 
-        // 現在開いている行を閉じる
+        // イベントクリック時は展開トリガーを無効化
+        if (e.target.closest('.event')) return;
+
         const expanded = document.querySelector('tr.expanded');
+
+        // 他の行が展開されていたら閉じる
         if (expanded && expanded !== row) {
             expanded.classList.remove('expanded');
         }
 
-        // 自分を展開（既に開いていてもそのまま）
+        // まだ展開されていないときだけ展開
         if (!row.classList.contains('expanded')) {
             row.classList.add('expanded');
         }
+        // すでに展開済みなら何もしない
     });
 });
 
-// 既存の document.querySelectorAll('.event') ... を削除して、代わりに：
-document.querySelector('table').addEventListener('click', e => {
-    const ev = e.target.closest('.event');
-    if (!ev) return;
 
-    const row = ev.closest('tr');
+// 展開中のみイベントを編集可能
+document.querySelector('table').addEventListener('click', e => {
+    const eventEl = e.target.closest('.event');
+    if (!eventEl) return;
+
+    const row = eventEl.closest('tr');
     if (!row.classList.contains('expanded')) return;
     e.stopPropagation();
 
-    const date = ev.closest('td').dataset.date;
-    const timeEl = ev.querySelector('.event-time');
-    const time = timeEl ? timeEl.textContent.trim() : "";
-    const title = ev.querySelector('.event-title')
-        ? ev.querySelector('.event-title').textContent.trim()
-        : ev.textContent.trim();
-    const color = ev.style.backgroundColor || '#e8f0fe';
-    const id = ev.dataset.id;
+    const date = eventEl.closest('td').dataset.date;
+    const time = eventEl.querySelector('.event-time')?.textContent.trim() || '';
+    const title = eventEl.querySelector('.event-title')?.textContent.trim() || '';
+    const color = eventEl.style.backgroundColor || '#e8f0fe';
+    const id = eventEl.dataset.id;
 
-    document.getElementById('event-id').value = id;
-    document.getElementById('event-date').value = date;
-    document.getElementById('event-time').value = time;
-    document.getElementById('event-text').value = title;
-    document.getElementById('event-color').value = color;
-
-    document.querySelectorAll('.color-option').forEach(opt => {
-        opt.classList.toggle('selected', opt.dataset.color === color);
+    Object.assign(fields, {
+        id: { value: id },
+        date: { value: date },
+        time: { value: time },
+        title: { value: title },
+        color: { value: color }
     });
 
-    const form = document.getElementById('event-form');
-    form.action = '/update';
+    colorOptions.forEach(opt =>
+        opt.classList.toggle('selected', opt.dataset.color === color)
+    );
+
     form.style.display = 'block';
 });
 
-// 削除ボタン
-document.getElementById('delete-event').onclick = () => {
-    const id = document.getElementById('event-id').value;
-    if (!id) return;
-    fetch(`/delete/${id}`, { method: 'POST' })
-        .then(() => location.reload());
-};
+// ---------------------
+// ユーティリティ
+// ---------------------
 
-// キャンセル
-document.getElementById('cancel-event').onclick = () => {
-    document.getElementById('event-form').style.display = 'none';
-};
+function resetForm() {
+    Object.values(fields).forEach(f => (f.value = ''));
+    selectedColor = '#e8f0fe';
+    colorOptions.forEach(o => o.classList.remove('selected'));
+}
