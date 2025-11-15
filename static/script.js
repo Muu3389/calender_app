@@ -75,30 +75,43 @@ saveBtn.onclick = async e => {
     const { id, date, time, title, color } = Object.fromEntries(
         Object.entries(fields).map(([k, v]) => [k, v.value])
     );
-    if (!title) return;
+    if (!title) {
+        alert('予定内容を入力してください');
+        return;
+    }
 
     const isUpdate = Boolean(id);
     const endpoint = isUpdate ? '/update' : '/add';
 
-    const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            id,
-            date,
-            time,
-            title,
-            color: color || selectedColor
-        })
-    });
+    try {
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id,
+                date,
+                time,
+                title,
+                color: color || selectedColor
+            })
+        });
 
-    if (!response.ok) return;
-    const result = await response.json();
-    const eventId = result.id || id;
+        if (!response.ok) {
+            const error = await response.json();
+            alert(error.message || '保存に失敗しました');
+            return;
+        }
+        
+        const result = await response.json();
+        const eventId = result.id || id;
 
-    renderEvent({ eventId, date, time, title, color });
-    resetForm();
-    form.style.display = 'none';
+        renderEvent({ eventId, date, time, title, color });
+        resetForm();
+        form.style.display = 'none';
+    } catch (error) {
+        console.error('保存エラー:', error);
+        alert('保存に失敗しました');
+    }
 };
 
 // ---------------------
@@ -124,9 +137,20 @@ function renderEvent({ eventId, date, time, title, color }) {
     div.className = 'event';
     div.dataset.id = eventId;
     div.style.backgroundColor = color;
-    div.innerHTML = time
-        ? `<span class="event-time">${time}</span> <span class="event-title">${title}</span>`
-        : `<span class="event-title">${title}</span>`;
+    
+    // Use textContent instead of innerHTML to prevent XSS
+    if (time) {
+        const timeSpan = document.createElement('span');
+        timeSpan.className = 'event-time';
+        timeSpan.textContent = time;
+        div.appendChild(timeSpan);
+        div.appendChild(document.createTextNode(' '));
+    }
+    
+    const titleSpan = document.createElement('span');
+    titleSpan.className = 'event-title';
+    titleSpan.textContent = title;
+    div.appendChild(titleSpan);
 
     list.appendChild(div);
 }
