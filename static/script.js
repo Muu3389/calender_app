@@ -41,6 +41,12 @@ document.querySelectorAll('.day-cell').forEach(cell => {
 // フォーム制御
 // ---------------------
 
+// Prevent default form submission
+form.onsubmit = (e) => {
+    e.preventDefault();
+    return false;
+};
+
 // キャンセルボタン → 閉じる＆リセット
 cancelBtn.onclick = () => {
     form.style.display = 'none';
@@ -75,7 +81,7 @@ saveBtn.onclick = async e => {
     const { id, date, time, title, color } = Object.fromEntries(
         Object.entries(fields).map(([k, v]) => [k, v.value])
     );
-    if (!title) {
+    if (!title || !title.trim()) {
         alert('予定内容を入力してください');
         return;
     }
@@ -105,7 +111,7 @@ saveBtn.onclick = async e => {
         const result = await response.json();
         const eventId = result.id || id;
 
-        renderEvent({ eventId, date, time, title, color });
+        renderEvent({ eventId, date, time, title, color: color || selectedColor });
         resetForm();
         form.style.display = 'none';
     } catch (error) {
