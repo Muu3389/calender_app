@@ -41,6 +41,12 @@ document.querySelectorAll('.day-cell').forEach(cell => {
 // フォーム制御
 // ---------------------
 
+// Prevent default form submission
+form.onsubmit = (e) => {
+    e.preventDefault();
+    return false;
+};
+
 // キャンセルボタン → 閉じる＆リセット
 cancelBtn.onclick = () => {
     form.style.display = 'none';
@@ -75,7 +81,7 @@ saveBtn.onclick = async e => {
     const { id, date, time, title, color } = Object.fromEntries(
         Object.entries(fields).map(([k, v]) => [k, v.value])
     );
-    if (!title) {
+    if (!title || !title.trim()) {
         alert('予定内容を入力してください');
         return;
     }
@@ -105,7 +111,7 @@ saveBtn.onclick = async e => {
         const result = await response.json();
         const eventId = result.id || id;
 
-        renderEvent({ eventId, date, time, title, color });
+        renderEvent({ eventId, date, time, title, color: color || selectedColor });
         resetForm();
         form.style.display = 'none';
     } catch (error) {
@@ -192,16 +198,17 @@ document.querySelector('table').addEventListener('click', e => {
     const date = eventEl.closest('td').dataset.date;
     const time = eventEl.querySelector('.event-time')?.textContent.trim() || '';
     const title = eventEl.querySelector('.event-title')?.textContent.trim() || '';
-    const color = eventEl.style.backgroundColor || '#e8f0fe';
+    const colorRaw = eventEl.style.backgroundColor || '#e8f0fe';
+    const color = rgbToHex(colorRaw);
     const id = eventEl.dataset.id;
 
-    Object.assign(fields, {
-        id: { value: id },
-        date: { value: date },
-        time: { value: time },
-        title: { value: title },
-        color: { value: color }
-    });
+    // Set field values directly
+    fields.id.value = id;
+    fields.date.value = date;
+    fields.time.value = time;
+    fields.title.value = title;
+    fields.color.value = color;
+    selectedColor = color;
 
     colorOptions.forEach(opt =>
         opt.classList.toggle('selected', opt.dataset.color === color)
@@ -213,6 +220,20 @@ document.querySelector('table').addEventListener('click', e => {
 // ---------------------
 // ユーティリティ
 // ---------------------
+
+// Convert RGB color to hex format
+function rgbToHex(rgb) {
+    if (!rgb || rgb.startsWith('#')) return rgb;
+    const match = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+    if (!match) return rgb;
+    const r = parseInt(match[1]);
+    const g = parseInt(match[2]);
+    const b = parseInt(match[3]);
+    return '#' + [r, g, b].map(x => {
+        const hex = x.toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+    }).join('');
+}
 
 function resetForm() {
     Object.values(fields).forEach(f => (f.value = ''));
